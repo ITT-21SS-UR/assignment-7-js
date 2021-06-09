@@ -2,7 +2,6 @@
 
 Question 1: What is the defining property of Gaussian noise?
 
-test
 
 Question 2: What does a low-pass filter do in general?
 
