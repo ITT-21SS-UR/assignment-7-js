@@ -1,1 +1,9 @@
 7.1: A short introduction to Digital Signal Processing
+
+Question 1: What is the defining property of Gaussian noise?
+
+Question 2: What does a low-pass filter do in general?
+
+Ouestion 3: Is a moving average filter a low-pass or a high-pass filter? Why?
+
+
