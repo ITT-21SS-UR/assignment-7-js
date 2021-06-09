@@ -4,6 +4,12 @@ Question 1: What is the defining property of Gaussian noise?
 
 Question 2: What does a low-pass filter do in general?
 
+#Reminder: 
+- Chapter 3, Section Analog Filters for Data Conversion
+- block all frequencies above the cutoff frequency (the stopband)
+- passing all frequencies below (the passband)
+
 Ouestion 3: Is a moving average filter a low-pass or a high-pass filter? Why?
+ - low pass filter
 
 
