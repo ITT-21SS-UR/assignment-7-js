@@ -12,7 +12,7 @@ Question 2: What does a low-pass filter do in general?
 Ouestion 3: Is a moving average filter a low-pass or a high-pass filter? Why?
 
 #Reminder
- -  Chapter 15 Moving Average Filters
+ - Chapter 15 Moving Average Filters
  - low pass filter
 
 
