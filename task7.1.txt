@@ -2,6 +2,7 @@
 
 Question 1: What is the defining property of Gaussian noise?
 
+
 Question 2: What does a low-pass filter do in general?
 
 According to the book a low pass filter do in general "block all frequencies above the cutoff frequency (the stopband), while passing all frequencies below (the passband)." (chapter 3, p. 52) 
