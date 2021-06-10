@@ -13,8 +13,7 @@ but an exceptionally bad low-pass filter (the action in the frequency domain)." 
 Steven W. Smith cites the "slow roll-off and poor stopband attenuation" as reasons why the moving average is a bad low-pass filter. (Smith, 1997, p. 280)
 
 
-Source: 
+Sources: 
 
 Smith, S. W. (1997). The Scientist and Engineer’s Guide to Digital Signal Processing. California Technical Pub.
-
 Wikipedia contributors. (2021, 17. Januar). Gaussian noise. Wikipedia. https://en.wikipedia.org/wiki/Gaussian_noise
