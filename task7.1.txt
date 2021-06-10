@@ -4,16 +4,15 @@ Question 1: What is the defining property of Gaussian noise?
 
 Question 2: What does a low-pass filter do in general?
 
-#Reminder: 
-- Chapter 3, Section Analog Filters for Data Conversion
-- block all frequencies above the cutoff frequency (the stopband)
-- passing all frequencies below (the passband)
+According to the book a low pass filter do in general "block all frequencies above the cutoff frequency (the stopband), while passing all frequencies below (the passband)." (chapter 3, p. 52) 
 
 Ouestion 3: Is a moving average filter a low-pass or a high-pass filter? Why?
 
-#Reminder
- - Chapter 15 Moving Average Filters, Section Frequency Response
- - low pass filter (reducing random noise while retaining a sharp step response)
- - the moving average is an exceptionally good smoothing filter (the action in the time domain), but an exceptionally bad low-pass filter (the action in the frequency domain).
+We've come to the assumption that a moving average filter is a low-pass filter. Steven W. Smith describes "the moving average is an exceptionally good smoothing filter (the action in the time domain), 
+but an exceptionally bad low-pass filter (the action in the frequency domain)." (chapter 15, S. 280) 
+Steven W. Smith cites the "slow roll-off and poor stopband attenuation" as reasons why the moving average is a bad low-pass filter. (chapter 15, S. 280)
 
 
+Source: 
+
+Smith, S. W. (1997). The Scientist and Engineer’s Guide to Digital Signal Processing. California Technical Pub.
