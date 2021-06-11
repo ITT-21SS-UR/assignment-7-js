@@ -1,4 +1,4 @@
-from DIPPID import SensorUDP
+from DIPPID_MAIN.DIPPID import SensorUDP
 #from DIPPID import SensorSerial
 #from DIPPID import SensorWiimote
 
