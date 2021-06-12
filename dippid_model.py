@@ -1,19 +1,10 @@
 import random
-import datetime
 
 from DIPPID_MAIN.DIPPID import Sensor, SensorUDP, SensorSerial
 from time import sleep
 
-# use UPD (via WiFi) for communication
-# PORT = 5700
-# sensor = SensorUDP(PORT)
-
-# use the serial connection (USB) for communication
-# TTY = '/dev/ttyUSB0'
-# sensor = SensorSerial(TTY)
-
 '''
-Model for reading sensor data.
+Model for reading sensor data and .
 Author: Sarah
 Reviewer: Jonas
 '''
@@ -30,38 +21,12 @@ class GameModel():
     def __init__(self, sensor):
         super().__init__()
 
-        #self.__port = port
-        self.__sensor = sensor
-
         self.__command_list = [
             self.TEXT_BUTTON_LEFT,
             self.TEXT_BUTTON_MIDDLE,
-            self.TEXT_BUTTON_RIGHT]
-            #self.TEXT_TURN_LEFT]
-
-    def read_data(self):
-        while(True):
-            # print all capabilities of the sensor
-            print('capabilities: ', self.__sensor.get_capabilities())
-
-            # check if the sensor has the 'accelerometer' capability
-            if(self.__sensor.has_capability('accelerometer')):
-                # print whole accelerometer object (dictionary)
-                print('accelerometer data: ',
-                      self.__sensor.get_value('accelerometer'))
-
-                # print only one accelerometer axis
-                print('accelerometer X: ', self.__sensor.get_value(
-                    'accelerometer')['x'])
-
-            sleep(0.1)
-
-    def is_left_button_pressed(self):
-        if(self.__sensor.has_capability('button_1')):
-            if(self.__sensor.get_value('button_1') == 1):
-                print('Left button pressed')
-                return True
-            return False
+            self.TEXT_BUTTON_RIGHT,
+            self.TEXT_TURN_LEFT,
+            self.TEXT_TURN_RIGHT]
 
     def generate_command_text(self):
         random.shuffle(self.__command_list)
@@ -80,12 +45,50 @@ class GameModel():
 
         return False
 
-    def is_movment_text(self, text):
-        if text == self.TEXT_TURN_LEFT or self.TEXT_TURN_RIGHT:
+    def is_mov_text(self, text):
+        if text == self.TEXT_TURN_LEFT or text == self.TEXT_TURN_RIGHT:
             return True
         return False
 
+    def get_data(self, sensor):
+        NUMBER_OF_VALUES = 10
+        data = []
+        # consider ten angle values
+        # if x is negative then it is  a left turn
+        # if x is positive then it is a right turn
+        for i in range(0, 10):
+            data[i] = 0
 
+        while True:
+            if data[NUMBER_OF_VALUES] != 0:
+                return self.is_correct_move(data)
+
+            for i in data:
+                # i%10
+                data[i] = sensor.get_value('angle_x')
+                sleep(1)
+
+    def is_left_move(self, data):
+        # x negative
+        for i in data:
+            if i > 0:
+                return False
+        return True
+
+    def is_right_move(self, data):
+        # x positve
+        for i in data:
+            if i < 0:
+                return False
+        return True
+
+    def is_correct_move(self, text, x):
+        if text == self.TEXT_TURN_LEFT and self.is_left_move(x):
+            return True
+        elif text == self.TEXT_TURN_RIGHT and self.is_right_move(x):
+            return True
+
+        return False
 
     def calculate_time_difference(self, start_time, end_time):
         try:

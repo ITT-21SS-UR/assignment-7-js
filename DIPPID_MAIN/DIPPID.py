@@ -2,7 +2,6 @@ import sys
 import json
 from threading import Thread
 from time import sleep
-from datetime import datetime
 import signal
 
 # those modules are imported dynamically during runtime

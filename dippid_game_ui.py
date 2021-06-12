@@ -2,18 +2,20 @@ import sys
 
 from datetime import datetime
 from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QVBoxLayout
 
 from DIPPID_MAIN.DIPPID import SensorUDP
 from dippid_model import GameModel
 
 '''
-Class for UI and programm entry.
+The game is implemented for the M5Stack and uses UDP port for connection.
 
 HOW TO START THE PROGRAM:
-python3 dippid_game_ui.py [PORT]
-as default PORT use 5700
+- Connect the M5Stack over UDP port
+- Type "python3 dippid_game_ui.py [PORT]" into console
+- As default PORT use 5700
 
 Author: Sarah
 Reviewer: Jonas
@@ -21,7 +23,11 @@ Reviewer: Jonas
 
 TOTAL_TURNS = 10
 
+
 class MainWindow(QtWidgets.QWidget):
+    game_finished = pyqtSignal()
+    turn_finished = pyqtSignal()
+
     def __init__(self, port):
         super(MainWindow, self).__init__()
 
@@ -30,8 +36,7 @@ class MainWindow(QtWidgets.QWidget):
 
         self.current_text = self.__model.generate_command_text()
         self.command_text_el = self.__setup_command_text()
-        self.command_text_el.setText(self.current_text)
-        
+
         self.__credits = 0
         self.__turns = TOTAL_TURNS
         self.__start_time = None
@@ -40,10 +45,7 @@ class MainWindow(QtWidgets.QWidget):
         self.__setup_layout()
         self.__show_hint()
 
-        self.__sensor.register_callback('button_1', self.handle_button_1_press)
-        self.__sensor.register_callback('button_2', self.handle_button_2_press)
-        self.__sensor.register_callback('button_3', self.handle_button_3_press)
-
+        self.start_game()
 
     def __setup_command_text(self):
         command_text = QtWidgets.QLabel(self)
@@ -71,76 +73,78 @@ class MainWindow(QtWidgets.QWidget):
                             "Follow the text instructions as fast as possible!\
                             \n(e.g. press left button)")
 
-        # TODO evtl. start timer if ok-button is pressed                   
+        self.__sensor.register_callback('button_1', self.handle_button_1_press)
+        self.__sensor.register_callback('button_2', self.handle_button_2_press)
+        self.__sensor.register_callback('button_3', self.handle_button_3_press)
+
         self.__start_time = datetime.now()
 
-    def __show_results(self, time):
+    def start_game(self):
+        self.turn_finished.connect(self.show_next)
+        self.game_finished.connect(self.stop_game)
+        self.show_next()
+
+    def show_results(self):
+        self.__end_time = datetime.now()
+        self.__time_diff = self.__model.calculate_time_difference(
+            self.__start_time, self.__end_time)
+
         QtWidgets.QMessageBox.information(self,
                                           "Results",
-                                          "Credits: " + str(self.__credits) + 
+                                          "Credits: " + str(self.__credits) +
                                           " out of " + str(TOTAL_TURNS) +
-                                          "\n Time: " + str(time) + "s")
-        
-        # stop app if ok button is clicked
-        QtWidgets.qApp.quit()
+                                          "\n Time: " + str(self.__time_diff) + "s")
 
-    def update_com_text(self):
-        self.current_text = self.__model.generate_command_text()
-        self.command_text_el.setText(self.current_text)
-        self.update()
+    def show_next(self):
+        if self.__turns == 0:
+            self.game_finished.emit()
+        else:
+            self.current_text = self.__model.generate_command_text()
+            self.command_text_el.setText(self.current_text)
+            self.update()
 
     def handle_button_1_press(self, data):
-        if int(data) == 0:
-            print('button 1 released')
-        else:
+        if int(data) != 0:
             print('button 1 pressed')
-            if self.__model.is_correct_button(self.current_text, 1):
-                self.__credits += 1
-
-            self.__turns -= 1
-            if self.__turns == 0:
-                self.calculate_results()
-            else:
-                self.update_com_text()
+            self.handle_buttons(1)
 
     def handle_button_2_press(self, data):
-        if int(data) == 0:
-            print('button 2 released')
-        else:
+        if int(data) != 0:
             print('button 2 pressed')
-            if self.__model.is_correct_button(self.current_text, 2):
-                self.__credits += 1
-
-            self.__turns -= 1
-            if self.__turns == 0:
-                self.calculate_results()
-            else:
-                self.update_com_text()
-            
+            self.handle_buttons(2)
 
     def handle_button_3_press(self, data):
-        if int(data) == 0:
-            print('button 3 released')
-        else:
+        if int(data) != 0:
             print('button 3 pressed')
-            if self.__model.is_correct_button(self.current_text, 3):
-                self.__credits += 1
-            
-            self.__turns -= 1
-            if self.__turns == 0:
-                self.calculate_results()
-            else:
-                self.update_com_text()
+            self.handle_buttons(3)
 
-    def calculate_results(self):
-        self.__end_time = datetime.now()
-        time = self.__model.calculate_time_difference(self.__start_time, self.__end_time)
-        self.__show_results(time)
+    def handle_buttons(self, button_num):
+        if self.__model.is_correct_button(self.current_text, button_num):
+            self.__credits += 1
+
+        self.__turns -= 1
+        self.turn_finished.emit()
 
     def handle_movement(self):
-        if self.__model.is_movment_text(self.current_text):
-            print("moving")
-            # TODO in do while check if correct
+        if self.__model.get_data(self.__sensor):
+            self.__credits += 1
+
+        self.__turns -= 1
+        self.turn_finished.emit()
+
+    def unregister_buttons(self):
+        self.__sensor.unregister_callback(
+            'button_1', self.handle_button_1_press)
+        self.__sensor.unregister_callback(
+            'button_2', self.handle_button_2_press)
+        self.__sensor.unregister_callback(
+            'button_3', self.handle_button_3_press)
+
+    def stop_game(self):
+        self.unregister_buttons()
+        self.__sensor.disconnect()
+        self.show_results()
+        QtWidgets.qApp.quit()
 
 
 if __name__ == "__main__":
