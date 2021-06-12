@@ -9,9 +9,7 @@ Question 1: What is the defining property of Gaussian noise?
 Question 2: What does a low-pass filter do in general?
 
 A low-pass filter is used to pass or block frequencies. When frequencies are blocked or passed by the low-pass filter depends on the cutoff frequency. 
-The low-pass filter allows signals with a frequency below the cut-off frequency to pass.
-
-According to the book a low pass filter do in general "block all frequencies above the cutoff frequency (the stopband), while passing all frequencies below (the passband)." (Smith, 1997, p. 52) 
+The low-pass filter allows signals with frequencies below the cut-off frequency to pass while signals with frequencies are blocked above the cut-off frequency. 
 
 Ouestion 3: Is a moving average filter a low-pass or a high-pass filter? Why?
 
