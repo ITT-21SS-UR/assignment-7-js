@@ -1,4 +1,5 @@
 import random
+import datetime
 
 from DIPPID_MAIN.DIPPID import Sensor, SensorUDP, SensorSerial
 from time import sleep
@@ -23,7 +24,8 @@ class GameModel():
     TEXT_BUTTON_LEFT = "Press the left button"
     TEXT_BUTTON_MIDDLE = "Press the middle button"
     TEXT_BUTTON_RIGHT = "Press the right button"
-    #TEXT_TURN_LEFT = "Turn it to the left"
+    TEXT_TURN_LEFT = "Turn it to the left"
+    TEXT_TURN_RIGHT = "Turn it to the right"
 
     def __init__(self, sensor):
         super().__init__()
@@ -77,3 +79,18 @@ class GameModel():
             return True
 
         return False
+
+    def is_movment_text(self, text):
+        if text == self.TEXT_TURN_LEFT or self.TEXT_TURN_RIGHT:
+            return True
+        return False
+
+
+
+    def calculate_time_difference(self, start_time, end_time):
+        try:
+            return round((end_time - start_time).total_seconds(), 2)
+        except AttributeError:
+            return self.INVALID_TIME
+        except TypeError:
+            return self.INVALID_TIME
