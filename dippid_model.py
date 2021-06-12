@@ -4,7 +4,7 @@ from DIPPID_MAIN.DIPPID import Sensor, SensorUDP, SensorSerial
 from time import sleep
 
 '''
-Model for reading sensor data and .
+Model for reading sensor data and verify data.
 Author: Sarah
 Reviewer: Jonas
 '''
@@ -18,7 +18,7 @@ class GameModel():
     TEXT_TURN_LEFT = "Turn it to the left"
     TEXT_TURN_RIGHT = "Turn it to the right"
 
-    def __init__(self, sensor):
+    def __init__(self):
         super().__init__()
 
         self.__command_list = [
@@ -29,8 +29,7 @@ class GameModel():
             self.TEXT_TURN_RIGHT]
 
     def generate_command_text(self):
-        random.shuffle(self.__command_list)
-        return self.__command_list[0]
+        return random.choice(self.__command_list)
 
     def get_command_list(self):
         return self.__command_list
@@ -50,42 +49,30 @@ class GameModel():
             return True
         return False
 
-    def get_data(self, sensor):
-        NUMBER_OF_VALUES = 10
-        data = []
-        # consider ten angle values
-        # if x is negative then it is  a left turn
-        # if x is positive then it is a right turn
-        for i in range(0, 10):
-            data[i] = 0
+    def is_correct_move(self, text, sensor):
+        SAMPLE_SIZE = 200
+        SAMPLE_RATE = 1 / 20 # 20 Hz
 
-        while True:
-            if data[NUMBER_OF_VALUES] != 0:
-                return self.is_correct_move(data)
+        NUMBER_OF_VALUES = 5
+        data = [0] * NUMBER_OF_VALUES
 
-            for i in data:
-                # i%10
-                data[i] = sensor.get_value('angle_x')
-                sleep(1)
+        for i in range(0, SAMPLE_SIZE):
+            data[i % NUMBER_OF_VALUES] = sensor.get_value('accelerometer')['x']
+            if all(x < -0.1 for x in data): # right
+                return self.__is_correct_move(text, 1)
+            
+            if all(x > 0.1 for x in data): # left
+                return self.__is_correct_move(text, -1)
+            
+            sleep(SAMPLE_RATE)
+        
+        return False
 
-    def is_left_move(self, data):
-        # x negative
-        for i in data:
-            if i > 0:
-                return False
-        return True
-
-    def is_right_move(self, data):
-        # x positve
-        for i in data:
-            if i < 0:
-                return False
-        return True
-
-    def is_correct_move(self, text, x):
-        if text == self.TEXT_TURN_LEFT and self.is_left_move(x):
+    def __is_correct_move(self, text, x):
+        if text == self.TEXT_TURN_LEFT and x < 0:
             return True
-        elif text == self.TEXT_TURN_RIGHT and self.is_right_move(x):
+
+        if text == self.TEXT_TURN_RIGHT and x > 0:
             return True
 
         return False

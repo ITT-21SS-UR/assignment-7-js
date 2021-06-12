@@ -27,12 +27,13 @@ TOTAL_TURNS = 10
 class MainWindow(QtWidgets.QWidget):
     game_finished = pyqtSignal()
     turn_finished = pyqtSignal()
+    start_movement = pyqtSignal()
 
     def __init__(self, port):
         super(MainWindow, self).__init__()
 
         self.__sensor = SensorUDP(port)
-        self.__model = GameModel(self.__sensor)
+        self.__model = GameModel()
 
         self.current_text = self.__model.generate_command_text()
         self.command_text_el = self.__setup_command_text()
@@ -80,8 +81,9 @@ class MainWindow(QtWidgets.QWidget):
         self.__start_time = datetime.now()
 
     def start_game(self):
-        self.turn_finished.connect(self.show_next)
-        self.game_finished.connect(self.stop_game)
+        self.turn_finished.connect(self.show_next, QtCore.Qt.QueuedConnection)
+        self.game_finished.connect(self.stop_game, QtCore.Qt.QueuedConnection)
+        self.start_movement.connect(self.handle_movement, QtCore.Qt.QueuedConnection)
         self.show_next()
 
     def show_results(self):
@@ -102,6 +104,9 @@ class MainWindow(QtWidgets.QWidget):
             self.current_text = self.__model.generate_command_text()
             self.command_text_el.setText(self.current_text)
             self.update()
+
+            if self.__model.is_mov_text(self.current_text):
+                QtCore.QTimer.singleShot(100, self.handle_movement)
 
     def handle_button_1_press(self, data):
         if int(data) != 0:
@@ -125,12 +130,16 @@ class MainWindow(QtWidgets.QWidget):
         self.__turns -= 1
         self.turn_finished.emit()
 
+    @QtCore.pyqtSlot()
     def handle_movement(self):
-        if self.__model.get_data(self.__sensor):
+        # print('capabilities: ', self.__sensor.get_capabilities())
+        print("handle_movement")
+        if self.__model.is_correct_move(self.current_text, self.__sensor):
             self.__credits += 1
 
         self.__turns -= 1
         self.turn_finished.emit()
+        print("handle_movement finished")
 
     def unregister_buttons(self):
         self.__sensor.unregister_callback(
@@ -148,7 +157,6 @@ class MainWindow(QtWidgets.QWidget):
 
 
 if __name__ == "__main__":
-
     app = QtWidgets.QApplication(sys.argv)
 
     main_window = MainWindow(int(sys.argv[1]))
