@@ -1,5 +1,6 @@
-from DIPPID_MAIN.DIPPID import Sensor, SensorUDP, SensorSerial
+import random
 
+from DIPPID_MAIN.DIPPID import Sensor, SensorUDP, SensorSerial
 from time import sleep
 
 # use UPD (via WiFi) for communication
@@ -17,12 +18,24 @@ Reviewer: Jonas
 '''
 
 
-class SensorModel():
-    def __init__(self, port):
+class GameModel():
+
+    TEXT_BUTTON_LEFT = "Press the left button"
+    TEXT_BUTTON_MIDDLE = "Press the middle button"
+    TEXT_BUTTON_RIGHT = "Press the right button"
+    #TEXT_TURN_LEFT = "Turn it to the left"
+
+    def __init__(self, sensor):
         super().__init__()
 
-        self.__port = port
-        self.__sensor = SensorUDP(self.__port)
+        #self.__port = port
+        self.__sensor = sensor
+
+        self.__command_list = [
+            self.TEXT_BUTTON_LEFT,
+            self.TEXT_BUTTON_MIDDLE,
+            self.TEXT_BUTTON_RIGHT]
+            #self.TEXT_TURN_LEFT]
 
     def read_data(self):
         while(True):
@@ -45,19 +58,22 @@ class SensorModel():
         if(self.__sensor.has_capability('button_1')):
             if(self.__sensor.get_value('button_1') == 1):
                 print('Left button pressed')
+                return True
+            return False
 
-    def is_middle_button_pressed(self):
-        if(self.__sensor.has_capability('button_2')):
-            if(self.__sensor.get_value('button_2') == 1):
-                print('Middle button pressed')
+    def generate_command_text(self):
+        random.shuffle(self.__command_list)
+        return self.__command_list[0]
 
-    def is_right_button_pressed(self):
-        if(self.__sensor.has_capability('button_3')):
-            if(self.__sensor.get_value('button_3') == 1):
-                print('Right button pressed')
+    def get_command_list(self):
+        return self.__command_list
 
-    def is_button_pressed(self):
-        while(True):
-            self.is_left_button_pressed()
-            self.is_middle_button_pressed()
-            self.is_right_button_pressed()
+    def is_correct_button(self, text, button_num):
+        if text == self.TEXT_BUTTON_LEFT and button_num == 1:
+            return True
+        elif text == self.TEXT_BUTTON_MIDDLE and button_num == 2:
+            return True
+        elif text == self.TEXT_BUTTON_RIGHT and button_num == 3:
+            return True
+
+        return False

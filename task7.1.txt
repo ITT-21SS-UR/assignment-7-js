@@ -19,8 +19,7 @@ Steven W. Smith cites the "slow roll-off and poor stopband attenuation" (Smith, 
 why the moving average is a bad low-pass filter.
 
 
-Source: 
+Sources: 
 
 Smith, S. W. (1997). The Scientist and Engineer’s Guide to Digital Signal Processing. California Technical Pub.
-
 Wikipedia contributors. (2021, 17. Januar). Gaussian noise. Wikipedia. https://en.wikipedia.org/wiki/Gaussian_noise
