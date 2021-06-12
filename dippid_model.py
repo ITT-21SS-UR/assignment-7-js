@@ -28,6 +28,9 @@ class GameModel():
             self.TEXT_TURN_LEFT,
             self.TEXT_TURN_RIGHT]
 
+    # TODO better choice
+    # not one mov after another
+    # not same instructions after another
     def generate_command_text(self):
         return random.choice(self.__command_list)
 
@@ -51,21 +54,21 @@ class GameModel():
 
     def is_correct_move(self, text, sensor):
         SAMPLE_SIZE = 200
-        SAMPLE_RATE = 1 / 20 # 20 Hz
+        SAMPLE_RATE = 1 / 20  # 20 Hz
 
         NUMBER_OF_VALUES = 5
         data = [0] * NUMBER_OF_VALUES
 
         for i in range(0, SAMPLE_SIZE):
             data[i % NUMBER_OF_VALUES] = sensor.get_value('accelerometer')['x']
-            if all(x < -0.1 for x in data): # right
+            if all(x < -0.1 for x in data):  # right
                 return self.__is_correct_move(text, 1)
-            
-            if all(x > 0.1 for x in data): # left
+
+            if all(x > 0.1 for x in data):  # left
                 return self.__is_correct_move(text, -1)
-            
+
             sleep(SAMPLE_RATE)
-        
+
         return False
 
     def __is_correct_move(self, text, x):

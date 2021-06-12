@@ -1,7 +1,7 @@
 import sys
 
 from datetime import datetime
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QVBoxLayout
@@ -28,6 +28,7 @@ class MainWindow(QtWidgets.QWidget):
     game_finished = pyqtSignal()
     turn_finished = pyqtSignal()
     start_movement = pyqtSignal()
+    is_correct_input = pyqtSignal(bool)
 
     def __init__(self, port):
         super(MainWindow, self).__init__()
@@ -35,7 +36,7 @@ class MainWindow(QtWidgets.QWidget):
         self.__sensor = SensorUDP(port)
         self.__model = GameModel()
 
-        self.current_text = self.__model.generate_command_text()
+        self.current_text = ""
         self.command_text_el = self.__setup_command_text()
 
         self.__credits = 0
@@ -52,6 +53,7 @@ class MainWindow(QtWidgets.QWidget):
         command_text = QtWidgets.QLabel(self)
         command_text.setFont(QFont("Arial", 30))
         command_text.setAlignment(QtCore.Qt.AlignCenter)
+        command_text.setText(self.current_text)
 
         return command_text
 
@@ -64,7 +66,6 @@ class MainWindow(QtWidgets.QWidget):
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.command_text_el)
-
         self.setLayout(layout)
 
     def __show_hint(self):
@@ -83,7 +84,10 @@ class MainWindow(QtWidgets.QWidget):
     def start_game(self):
         self.turn_finished.connect(self.show_next, QtCore.Qt.QueuedConnection)
         self.game_finished.connect(self.stop_game, QtCore.Qt.QueuedConnection)
-        self.start_movement.connect(self.handle_movement, QtCore.Qt.QueuedConnection)
+        self.start_movement.connect(
+            self.handle_movement, QtCore.Qt.QueuedConnection)
+        self.is_correct_input.connect(
+            self.show_is_correct, QtCore.Qt.QueuedConnection)
         self.show_next()
 
     def show_results(self):
@@ -98,6 +102,11 @@ class MainWindow(QtWidgets.QWidget):
                                           "\n Time: " + str(self.__time_diff) + "s")
 
     def show_next(self):
+        self.change_background_color("white")
+        # palette = self.palette()
+        # palette.setColor(QtGui.QPalette.Window, QtGui.QColor("White"))
+        # self.setPalette(palette)
+
         if self.__turns == 0:
             self.game_finished.emit()
         else:
@@ -109,16 +118,22 @@ class MainWindow(QtWidgets.QWidget):
                 QtCore.QTimer.singleShot(100, self.handle_movement)
 
     def handle_button_1_press(self, data):
+        self.__sensor.unregister_callback(
+            'button_1', self.handle_button_1_press)
         if int(data) != 0:
             print('button 1 pressed')
             self.handle_buttons(1)
 
     def handle_button_2_press(self, data):
+        self.__sensor.unregister_callback(
+            'button_2', self.handle_button_2_press)
         if int(data) != 0:
             print('button 2 pressed')
             self.handle_buttons(2)
 
     def handle_button_3_press(self, data):
+        self.__sensor.unregister_callback(
+            'button_3', self.handle_button_3_press)
         if int(data) != 0:
             print('button 3 pressed')
             self.handle_buttons(3)
@@ -126,31 +141,45 @@ class MainWindow(QtWidgets.QWidget):
     def handle_buttons(self, button_num):
         if self.__model.is_correct_button(self.current_text, button_num):
             self.__credits += 1
+            self.is_correct_input.emit(True)
+        else:
+            self.is_correct_input.emit(False)
 
         self.__turns -= 1
-        self.turn_finished.emit()
 
     @QtCore.pyqtSlot()
     def handle_movement(self):
-        # print('capabilities: ', self.__sensor.get_capabilities())
         print("handle_movement")
         if self.__model.is_correct_move(self.current_text, self.__sensor):
             self.__credits += 1
+            self.is_correct_input.emit(True)
+
+        else:
+            self.is_correct_input.emit(False)
 
         self.__turns -= 1
-        self.turn_finished.emit()
         print("handle_movement finished")
 
-    def unregister_buttons(self):
-        self.__sensor.unregister_callback(
-            'button_1', self.handle_button_1_press)
-        self.__sensor.unregister_callback(
-            'button_2', self.handle_button_2_press)
-        self.__sensor.unregister_callback(
-            'button_3', self.handle_button_3_press)
+    def change_background_color(self, background_color):
+        self.current_text = ""
+        self.command_text_el.setText(self.current_text)
+        self.setStyleSheet("background-color:" + background_color + ";")
+        self.update()
+
+    def show_is_correct(self, is_correct):
+        print(is_correct)
+
+        if is_correct:
+            QtCore.QTimer.singleShot(
+                1, lambda: self.change_background_color("green"))
+
+        else:
+            QtCore.QTimer.singleShot(
+                1, lambda: self.change_background_color("red"))
+
+        QtCore.QTimer.singleShot(2000, lambda: self.turn_finished.emit())
 
     def stop_game(self):
-        self.unregister_buttons()
         self.__sensor.disconnect()
         self.show_results()
         QtWidgets.qApp.quit()
