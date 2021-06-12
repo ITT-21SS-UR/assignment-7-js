@@ -2,15 +2,23 @@
 
 Question 1: What is the defining property of Gaussian noise?
 
+	- Signals formed from random processes usually have a bell shaped pdf
+	- The reason why this curve occurs so frequently in nature will be discussed shortly in conjunction with digital noise generation.
+	- An interesting characteristic of the Gaussian is that the tails drop toward zero very rapidly, much faster than with other common functions such as decaying exponentials or 1/x.
+
 Question 2: What does a low-pass filter do in general?
+
+A low-pass filter is used to pass or block frequencies. When frequencies are blocked or passed by the low-pass filter depends on the cutoff frequency. 
+The low-pass filter allows signals with a frequency below the cut-off frequency to pass.
 
 According to the book a low pass filter do in general "block all frequencies above the cutoff frequency (the stopband), while passing all frequencies below (the passband)." (Smith, 1997, p. 52) 
 
 Ouestion 3: Is a moving average filter a low-pass or a high-pass filter? Why?
 
 We've come to the assumption that a moving average filter is a low-pass filter. Steven W. Smith describes "the moving average is an exceptionally good smoothing filter (the action in the time domain), 
-but an exceptionally bad low-pass filter (the action in the frequency domain)." (Smith, 1997, p. 280) 
-Steven W. Smith cites the "slow roll-off and poor stopband attenuation" as reasons why the moving average is a bad low-pass filter. (Smith, 1997, p. 280)
+but an exceptionally bad low-pass filter (the action in the frequency domain)" (Smith, 1997, p. 280). 
+Steven W. Smith cites the "slow roll-off and poor stopband attenuation" (Smith, 1997, p. 280) as reasons 
+why the moving average is a bad low-pass filter.
 
 
 Source: 
