@@ -2,9 +2,9 @@
 
 Question 1: What is the defining property of Gaussian noise?
 
-	- Signals formed from random processes usually have a bell shaped pdf
-	- The reason why this curve occurs so frequently in nature will be discussed shortly in conjunction with digital noise generation.
-	- An interesting characteristic of the Gaussian is that the tails drop toward zero very rapidly, much faster than with other common functions such as decaying exponentials or 1/x.
+The Gaussion noise is noise that follows a normal distribution and was named after German mathematician Karl Friedrich Gauss. 
+This is why the normal distribution can also be referred to the Gaussian distribution. The Gaussian noise has a probability density function (pdf), 
+the graph of which reflects a bell curve. Therefore the tails go much faster towards the value zero compared to other functions (e.g. decaying exponentials and 1/x). 
 
 Question 2: What does a low-pass filter do in general?
 
