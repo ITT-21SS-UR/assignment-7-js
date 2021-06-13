@@ -5,9 +5,9 @@ import pyqtgraph.flowchart.library as fclib
 from pyqtgraph.flowchart import Flowchart, Node
 from pyqtgraph.flowchart.library.common import CtrlNode
 from pyqtgraph.Qt import QtGui, QtCore
-from DIPPID import SensorUDP, SensorSerial, SensorWiimote
+from DIPPID_MAIN.DIPPID import SensorUDP, SensorSerial, SensorWiimote
 # import BufferNode and DIPPIDNode
-from DIPPID_pyqtnode import BufferNode, DIPPIDNode
+from DIPPID_MAIN.DIPPID_pyqtnode import BufferNode, DIPPIDNode
 
 #create NormalVectorNode
 class NormalVectorNode(Node): 
@@ -20,12 +20,12 @@ class NormalVectorNode(Node):
             'accel_value2': dict(io='in'),
             'output_vector': dict(io='out')
         }
-        self._output_vector = np.array([])
+        self.__output_vector = np.array([])
         Node.__init__(self, name, terminals=terminals)
 
     def process(self, **kwds):
-        self._output_vector = np.array([[0, 0], [kwds['accel_value1'][0], kwds['accel_value2'][0]]])
-        return {'output_vector': _output_vector}
+        self.__output_vector = np.array([[0, 0], [kwds['accel_value1'][0], kwds['accel_value2'][0]]])
+        return {'output_vector': self.__output_vector}
 
 
 fclib.registerNodeType(NormalVectorNode, [('Data', )])

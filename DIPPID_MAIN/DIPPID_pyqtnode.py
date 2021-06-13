@@ -8,7 +8,7 @@ import pyqtgraph.flowchart.library as fclib
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
-from DIPPID import SensorUDP
+from DIPPID_MAIN.DIPPID import SensorUDP
 import sys
 
 
