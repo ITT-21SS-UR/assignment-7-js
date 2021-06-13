@@ -73,7 +73,7 @@ class MainWindow(QtWidgets.QWidget):
         msg_box.information(self,
                             "Instructions",
                             "Follow the text instructions as fast as possible!\
-                            \n(e.g. press left button)")
+                            \nIf action was correct, window turns green, if not, red.")
 
         self.__sensor.register_callback('button_1', self.handle_button_1_press)
         self.__sensor.register_callback('button_2', self.handle_button_2_press)
@@ -104,7 +104,6 @@ class MainWindow(QtWidgets.QWidget):
 
     def show_next(self):
         self.change_background_color("white")
-        print(self.__turns)
         if self.__turns == 0:
             self.game_finished.emit()
         else:
@@ -189,6 +188,10 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(True)
 
+    if len(sys.argv) < 2:
+        sys.stderr.write("Please specify port number as argument\n")
+        sys.exit(1)
+    
     main_window = MainWindow(int(sys.argv[1]))
     main_window.show()
 
