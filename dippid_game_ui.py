@@ -27,7 +27,6 @@ TOTAL_TURNS = 10
 class MainWindow(QtWidgets.QWidget):
     game_finished = pyqtSignal()
     turn_finished = pyqtSignal()
-    start_movement = pyqtSignal()
     is_correct_input = pyqtSignal(bool)
 
     def __init__(self, port):
@@ -43,6 +42,7 @@ class MainWindow(QtWidgets.QWidget):
         self.__turns = TOTAL_TURNS
         self.__start_time = None
         self.__end_time = None
+        self.__accept_button = False
 
         self.__setup_layout()
         self.__show_hint()
@@ -84,8 +84,6 @@ class MainWindow(QtWidgets.QWidget):
     def start_game(self):
         self.turn_finished.connect(self.show_next, QtCore.Qt.QueuedConnection)
         self.game_finished.connect(self.stop_game, QtCore.Qt.QueuedConnection)
-        self.start_movement.connect(
-            self.handle_movement, QtCore.Qt.QueuedConnection)
         self.is_correct_input.connect(
             self.show_is_correct, QtCore.Qt.QueuedConnection)
 
@@ -98,13 +96,13 @@ class MainWindow(QtWidgets.QWidget):
 
         QtWidgets.QMessageBox.information(self,
                                           "Results",
-                                          "Credits: " + str(self.__credits) +
+                                          "Score: " + str(self.__credits) +
                                           " out of " + str(TOTAL_TURNS) +
                                           "\n Time: " + str(self.__time_diff) + "s")
 
     def show_next(self):
         self.change_background_color("white")
-        if self.__turns == 0:
+        if self.__turns <= 0:
             self.game_finished.emit()
         else:
             self.current_text = self.__model.generate_command_text()
@@ -113,23 +111,27 @@ class MainWindow(QtWidgets.QWidget):
 
             if self.__model.is_mov_text(self.current_text):
                 QtCore.QTimer.singleShot(100, self.handle_movement)
+            else:
+                self.__accept_button = True
 
     def handle_button_1_press(self, data):
         if int(data) != 0:
-            print('button 1 pressed')
             self.handle_buttons(1)
 
     def handle_button_2_press(self, data):
         if int(data) != 0:
-            print('button 2 pressed')
             self.handle_buttons(2)
 
     def handle_button_3_press(self, data):
         if int(data) != 0:
-            print('button 3 pressed')
             self.handle_buttons(3)
 
     def handle_buttons(self, button_num):
+        if not self.__accept_button:
+            return
+
+        self.__accept_button = False
+
         if self.__model.is_correct_button(self.current_text, button_num):
             self.__credits += 1
             self.is_correct_input.emit(True)
@@ -140,7 +142,6 @@ class MainWindow(QtWidgets.QWidget):
 
     @QtCore.pyqtSlot()
     def handle_movement(self):
-        print("handle_movement")
         if self.__model.is_correct_move(self.current_text, self.__sensor):
             self.__credits += 1
             self.is_correct_input.emit(True)
@@ -149,17 +150,14 @@ class MainWindow(QtWidgets.QWidget):
             self.is_correct_input.emit(False)
 
         self.__turns -= 1
-        print("handle_movement finished")
 
     def change_background_color(self, background_color):
         self.setStyleSheet("background-color:" + background_color + ";")
-        self.current_text = "Left turns: " + str(self.__turns)
+        self.current_text = "Turns remaining: " + str(self.__turns)
         self.command_text_el.setText(self.current_text)
         self.update()
 
     def show_is_correct(self, is_correct):
-        print(is_correct)
-
         if is_correct:
             QtCore.QTimer.singleShot(
                 1, lambda: self.change_background_color("green"))
@@ -191,7 +189,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         sys.stderr.write("Please specify port number as argument\n")
         sys.exit(1)
-    
+
     main_window = MainWindow(int(sys.argv[1]))
     main_window.show()
 
