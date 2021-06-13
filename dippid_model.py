@@ -54,7 +54,7 @@ class GameModel():
 
     def is_correct_move(self, text, sensor):
         SAMPLE_SIZE = 200
-        SAMPLE_RATE = 1 / 20  # 20 Hz
+        SAMPLE_RATE = 1 / 40  # 40 Hz
 
         NUMBER_OF_VALUES = 5
         data = [0] * NUMBER_OF_VALUES

@@ -88,6 +88,7 @@ class MainWindow(QtWidgets.QWidget):
             self.handle_movement, QtCore.Qt.QueuedConnection)
         self.is_correct_input.connect(
             self.show_is_correct, QtCore.Qt.QueuedConnection)
+
         self.show_next()
 
     def show_results(self):
@@ -103,10 +104,7 @@ class MainWindow(QtWidgets.QWidget):
 
     def show_next(self):
         self.change_background_color("white")
-        # palette = self.palette()
-        # palette.setColor(QtGui.QPalette.Window, QtGui.QColor("White"))
-        # self.setPalette(palette)
-
+        print(self.__turns)
         if self.__turns == 0:
             self.game_finished.emit()
         else:
@@ -118,22 +116,16 @@ class MainWindow(QtWidgets.QWidget):
                 QtCore.QTimer.singleShot(100, self.handle_movement)
 
     def handle_button_1_press(self, data):
-        self.__sensor.unregister_callback(
-            'button_1', self.handle_button_1_press)
         if int(data) != 0:
             print('button 1 pressed')
             self.handle_buttons(1)
 
     def handle_button_2_press(self, data):
-        self.__sensor.unregister_callback(
-            'button_2', self.handle_button_2_press)
         if int(data) != 0:
             print('button 2 pressed')
             self.handle_buttons(2)
 
     def handle_button_3_press(self, data):
-        self.__sensor.unregister_callback(
-            'button_3', self.handle_button_3_press)
         if int(data) != 0:
             print('button 3 pressed')
             self.handle_buttons(3)
@@ -161,9 +153,9 @@ class MainWindow(QtWidgets.QWidget):
         print("handle_movement finished")
 
     def change_background_color(self, background_color):
-        self.current_text = ""
-        self.command_text_el.setText(self.current_text)
         self.setStyleSheet("background-color:" + background_color + ";")
+        self.current_text = "Left turns: " + str(self.__turns)
+        self.command_text_el.setText(self.current_text)
         self.update()
 
     def show_is_correct(self, is_correct):
@@ -181,12 +173,21 @@ class MainWindow(QtWidgets.QWidget):
 
     def stop_game(self):
         self.__sensor.disconnect()
+
+        self.__sensor.unregister_callback(
+            'button_1', self.handle_button_1_press)
+        self.__sensor.unregister_callback(
+            'button_2', self.handle_button_2_press)
+        self.__sensor.unregister_callback(
+            'button_3', self.handle_button_3_press)
+
         self.show_results()
         QtWidgets.qApp.quit()
 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(True)
 
     main_window = MainWindow(int(sys.argv[1]))
     main_window.show()
