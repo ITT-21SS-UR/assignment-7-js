@@ -1,4 +1,5 @@
 import sys
+from numpy.core.function_base import logspace
 import pyqtgraph as pg
 import numpy as np
 
@@ -160,11 +161,12 @@ if __name__ == '__main__':
     chart.connectTerminals(dippid_node['accelZ'], normal_vector_node['accel_z'])
     chart.connectTerminals(normal_vector_node['output_rotation'], plot_widget_node_4['In'])
 
-    
+    chart.connectTerminals(dippid_node['accelX'], log_node['accel_x'])
+    chart.connectTerminals(dippid_node['accelY'], log_node['accel_y'])
+    chart.connectTerminals(dippid_node['accelZ'], log_node['accel_z'])
 
     #######################################################################################
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         sys.exit(QtGui.QApplication.instance().exec_())
 
-    # win.show()
     sys.exit(app.exec_())
