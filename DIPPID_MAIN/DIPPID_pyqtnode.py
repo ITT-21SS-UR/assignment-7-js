@@ -8,7 +8,8 @@ import pyqtgraph.flowchart.library as fclib
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
-from DIPPID import SensorUDP
+
+from DIPPID_MAIN.DIPPID import SensorUDP
 import sys
 
 
@@ -32,9 +33,11 @@ class BufferNode(Node):
         Node.__init__(self, name, terminals=terminals)
 
     def process(self, **kwds):
-        self._buffer = np.append(self._buffer, kwds['dataIn'])[-self.buffer_size:]
+        self._buffer = np.append(
+            self._buffer, kwds['dataIn'])[-self.buffer_size:]
 
         return {'dataOut': self._buffer}
+
 
 fclib.registerNodeType(BufferNode, [('Data',)])
 
@@ -144,6 +147,7 @@ class DIPPIDNode(Node):
 
     def process(self, **kwdargs):
         return {'accelX': np.array([self._acc_vals[0]]), 'accelY': np.array([self._acc_vals[1]]), 'accelZ': np.array([self._acc_vals[2]])}
+
 
 fclib.registerNodeType(DIPPIDNode, [('Sensor',)])
 
