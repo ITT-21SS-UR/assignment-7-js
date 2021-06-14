@@ -1,6 +1,6 @@
 from time import sleep
 
-from DIPPID_MAIN.DIPPID import SensorUDP
+from DIPPID import SensorUDP
 #from DIPPID import SensorSerial
 #from DIPPID import SensorWiimote
 
