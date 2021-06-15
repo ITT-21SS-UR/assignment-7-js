@@ -98,7 +98,7 @@ if __name__ == '__main__':
     # accelerometer_x
     plot_widget_accel_x = pg.PlotWidget()
     plot_widget_accel_x.setTitle('Plot for Accelerometer X')
-    plot_widget_accel_x.setYRange(0, 1)
+    plot_widget_accel_x.setYRange(-1, 1)
     layout.addWidget(plot_widget_accel_x, 0, 1)
     plot_widget_node_1 = chart.createNode('PlotWidget', pos=(300, -200))
     plot_widget_node_1.setPlot(plot_widget_accel_x)
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     plot_widget_accel_y = pg.PlotWidget()
     layout.addWidget(plot_widget_accel_y, 0, 2)
     plot_widget_accel_y.setTitle('Plot for Accelerometer Y')
-    plot_widget_accel_y.setYRange(0, 1)
+    plot_widget_accel_y.setYRange(-1, 1)
     plot_widget_node_2 = chart.createNode('PlotWidget', pos=(300, -100))
     plot_widget_node_2.setPlot(plot_widget_accel_y)
 
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     plot_widget_accel_z = pg.PlotWidget()
     layout.addWidget(plot_widget_accel_z, 1, 1)
     plot_widget_accel_z.setTitle('Plot for Accelerometer Z')
-    plot_widget_accel_z.setYRange(0, 1)
+    plot_widget_accel_z.setYRange(-1, 1)
     plot_widget_node_3 = chart.createNode('PlotWidget', pos=(300, 200))
     plot_widget_node_3.setPlot(plot_widget_accel_z)
 
@@ -123,7 +123,8 @@ if __name__ == '__main__':
     plot_widget_normal_vector = pg.PlotWidget()
     layout.addWidget(plot_widget_normal_vector, 1, 2)
     plot_widget_normal_vector.setTitle('Plot for NormalVectorNode')
-    plot_widget_normal_vector.setYRange(0, 1)
+    plot_widget_normal_vector.setXRange(-1, 1)
+    plot_widget_normal_vector.setYRange(-1, 1)
     plot_widget_node_4 = chart.createNode('PlotWidget', pos=(300, 100))
     plot_widget_node_4.setPlot(plot_widget_normal_vector)
 
