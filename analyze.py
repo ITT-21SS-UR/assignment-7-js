@@ -12,9 +12,8 @@ from pyqtgraph.Qt import QtGui, QtCore
 from DIPPID_pyqtnode import BufferNode, DIPPIDNode
 from DIPPID import SensorUDP, SensorSerial, SensorWiimote
 
+
 # create NormalVectorNode
-
-
 class NormalVectorNode(Node):
 
     nodeName = "NormalVector"
@@ -39,6 +38,7 @@ class NormalVectorNode(Node):
 
 fclib.registerNodeType(NormalVectorNode, [('Data', )])
 
+
 # create LogNode
 class LogNode(Node):
 
@@ -55,9 +55,9 @@ class LogNode(Node):
 
     def process(self, **kwds):
         log_data = {
-                "accel_x": kwds["accel_x"][0],
-                "accel_y": kwds["accel_y"][0],
-                "accel_z": kwds["accel_z"][0]
+            "accel_x": kwds["accel_x"][0],
+            "accel_y": kwds["accel_y"][0],
+            "accel_z": kwds["accel_z"][0]
         }
         print(log_data)
         return log_data
@@ -66,20 +66,7 @@ class LogNode(Node):
 fclib.registerNodeType(LogNode, [('Log data', )])
 
 
-def generate_plots_and_nodes():
-    pass
-
-# def connect_nodes():
-    # fc.connectTerminals(dippidNode['accelX'], bufferNode['dataIn'])
-    # fc.connectTerminals(bufferNode['dataOut'], pw1Node['In'])
-
-
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        sys.stdout.write("Please specify port")
-    
-    port_num = sys.argv[0]
-    app = QtGui.QApplication([])
+def generate_plots():
     win = QtGui.QMainWindow()
     win.setWindowTitle('set title')
 
@@ -87,14 +74,10 @@ if __name__ == '__main__':
     win.setCentralWidget(central_widget)
     layout = QtGui.QGridLayout()
     central_widget.setLayout(layout)
-    win.show()
-
-    # generate_plots_and_nodes()
 
     chart = Flowchart(terminals={'out': dict(io='out')})
-    chart_widget = chart.widget()
     layout.addWidget(chart.widget(), 0, 0, 2, 1)
-    
+
     # accelerometer_x
     plot_widget_accel_x = pg.PlotWidget()
     plot_widget_accel_x.setTitle('Plot for Accelerometer X')
@@ -128,44 +111,54 @@ if __name__ == '__main__':
     plot_widget_node_4 = chart.createNode('PlotWidget', pos=(300, 100))
     plot_widget_node_4.setPlot(plot_widget_normal_vector)
 
-    # log vector
-    #plot_widget_log_vector = pg.PlotWidget()
-    #layout.addWidget(plot_widget_log_vector, 1, 2)
-    #plot_widget_log_vector.setTitle('Plot for LogVectorNode')
-    #plot_widget_log_vector.setYRange(0, 1)
-    #plot_widget_node_5 = chart.createNode('PlotWidget', pos=(0, -150)) 
-    #plot_widget_node_5.setPlot(plot_widget_log_vector)
-
-    # Create an empty flowchart with a single input and output
-
+    # create nodes
     dippid_node = chart.createNode("DIPPID", pos=(0, 0))
-
-    buffer_node_accel_x = chart.createNode("Buffer", pos=(100, -200)) 
+    buffer_node_accel_x = chart.createNode("Buffer", pos=(100, -200))
     buffer_node_accel_y = chart.createNode("Buffer", pos=(130, -100))
     buffer_node_accel_z = chart.createNode("Buffer", pos=(100, 200))
-
     normal_vector_node = chart.createNode("NormalVector", pos=(130, 100))
-
     log_node = chart.createNode("Log", pos=(150, 0))
 
-    #connect_nodes
-    chart.connectTerminals(dippid_node['accelX'], buffer_node_accel_x['dataIn'])
-    chart.connectTerminals(dippid_node['accelY'], buffer_node_accel_y['dataIn'])
-    chart.connectTerminals(dippid_node['accelZ'], buffer_node_accel_z['dataIn'])
-    chart.connectTerminals(buffer_node_accel_x['dataOut'], plot_widget_node_1['In'])
-    chart.connectTerminals(buffer_node_accel_y['dataOut'], plot_widget_node_2['In'])
-    chart.connectTerminals(buffer_node_accel_z['dataOut'], plot_widget_node_3['In'])
+    # connect nodes
+    chart.connectTerminals(
+        dippid_node['accelX'], buffer_node_accel_x['dataIn'])
+    chart.connectTerminals(
+        dippid_node['accelY'], buffer_node_accel_y['dataIn'])
+    chart.connectTerminals(
+        dippid_node['accelZ'], buffer_node_accel_z['dataIn'])
+    chart.connectTerminals(
+        buffer_node_accel_x['dataOut'], plot_widget_node_1['In'])
+    chart.connectTerminals(
+        buffer_node_accel_y['dataOut'], plot_widget_node_2['In'])
+    chart.connectTerminals(
+        buffer_node_accel_z['dataOut'], plot_widget_node_3['In'])
 
-    chart.connectTerminals(dippid_node['accelX'], normal_vector_node['accel_x'])
-    chart.connectTerminals(dippid_node['accelZ'], normal_vector_node['accel_z'])
-    chart.connectTerminals(normal_vector_node['output_rotation'], plot_widget_node_4['In'])
+    chart.connectTerminals(
+        dippid_node['accelX'], normal_vector_node['accel_x'])
+    chart.connectTerminals(
+        dippid_node['accelZ'], normal_vector_node['accel_z'])
+    chart.connectTerminals(
+        normal_vector_node['output_rotation'], plot_widget_node_4['In'])
 
     chart.connectTerminals(dippid_node['accelX'], log_node['accel_x'])
     chart.connectTerminals(dippid_node['accelY'], log_node['accel_y'])
     chart.connectTerminals(dippid_node['accelZ'], log_node['accel_z'])
 
-    #######################################################################################
+    win.show()
+
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         sys.exit(QtGui.QApplication.instance().exec_())
+
+
+if __name__ == '__main__':
+
+    if len(sys.argv) < 2:
+        sys.stdout.write("Please specify port")
+
+    port_num = sys.argv[1]
+    print(port_num)
+
+    app = QtGui.QApplication([])
+    generate_plots()
 
     sys.exit(app.exec_())
