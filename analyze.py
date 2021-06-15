@@ -91,17 +91,16 @@ if __name__ == '__main__':
 
     # generate_plots_and_nodes()
 
-###########################################################################
     chart = Flowchart(terminals={'out': dict(io='out')})
     chart_widget = chart.widget()
     layout.addWidget(chart.widget(), 0, 0, 2, 1)
-    # TODO nodes should have different positions
+    
     # accelerometer_x
     plot_widget_accel_x = pg.PlotWidget()
     plot_widget_accel_x.setTitle('Plot for Accelerometer X')
     plot_widget_accel_x.setYRange(0, 1)
     layout.addWidget(plot_widget_accel_x, 0, 1)
-    plot_widget_node_1 = chart.createNode('PlotWidget', pos=(0, 0)) # TODO
+    plot_widget_node_1 = chart.createNode('PlotWidget', pos=(300, -200))
     plot_widget_node_1.setPlot(plot_widget_accel_x)
 
     # accelerometer_y
@@ -109,7 +108,7 @@ if __name__ == '__main__':
     layout.addWidget(plot_widget_accel_y, 0, 2)
     plot_widget_accel_y.setTitle('Plot for Accelerometer Y')
     plot_widget_accel_y.setYRange(0, 1)
-    plot_widget_node_2 = chart.createNode('PlotWidget', pos=(0, 200)) # TODO
+    plot_widget_node_2 = chart.createNode('PlotWidget', pos=(300, -100))
     plot_widget_node_2.setPlot(plot_widget_accel_y)
 
     # accelerometer_z
@@ -117,7 +116,7 @@ if __name__ == '__main__':
     layout.addWidget(plot_widget_accel_z, 1, 1)
     plot_widget_accel_z.setTitle('Plot for Accelerometer Z')
     plot_widget_accel_z.setYRange(0, 1)
-    plot_widget_node_3 = chart.createNode('PlotWidget', pos=(0, 300)) # TODO
+    plot_widget_node_3 = chart.createNode('PlotWidget', pos=(300, 200))
     plot_widget_node_3.setPlot(plot_widget_accel_z)
 
     # normal vector
@@ -125,31 +124,30 @@ if __name__ == '__main__':
     layout.addWidget(plot_widget_normal_vector, 1, 2)
     plot_widget_normal_vector.setTitle('Plot for NormalVectorNode')
     plot_widget_normal_vector.setYRange(0, 1)
-    plot_widget_node_4 = chart.createNode('PlotWidget', pos=(0, -150)) # TODO
+    plot_widget_node_4 = chart.createNode('PlotWidget', pos=(300, 100))
     plot_widget_node_4.setPlot(plot_widget_normal_vector)
 
     # log vector
-    plot_widget_log_vector = pg.PlotWidget()
+    #plot_widget_log_vector = pg.PlotWidget()
     #layout.addWidget(plot_widget_log_vector, 1, 2)
     #plot_widget_log_vector.setTitle('Plot for LogVectorNode')
     #plot_widget_log_vector.setYRange(0, 1)
-    #plot_widget_node_5 = chart.createNode('PlotWidget', pos=(0, -150)) # TODO
+    #plot_widget_node_5 = chart.createNode('PlotWidget', pos=(0, -150)) 
     #plot_widget_node_5.setPlot(plot_widget_log_vector)
 
     # Create an empty flowchart with a single input and output
 
     dippid_node = chart.createNode("DIPPID", pos=(0, 0))
 
-    buffer_node_accel_x = chart.createNode("Buffer", pos=(150, 0)) # TODO position
-    buffer_node_accel_y = chart.createNode("Buffer", pos=(150, 0)) # TODO position
-    buffer_node_accel_z = chart.createNode("Buffer", pos=(150, 0)) # TODO position
+    buffer_node_accel_x = chart.createNode("Buffer", pos=(100, -200)) 
+    buffer_node_accel_y = chart.createNode("Buffer", pos=(130, -100))
+    buffer_node_accel_z = chart.createNode("Buffer", pos=(100, 200))
 
-    normal_vector_node = chart.createNode("NormalVector", pos=(0, 0)) # TODO position
+    normal_vector_node = chart.createNode("NormalVector", pos=(130, 100))
 
     log_node = chart.createNode("Log", pos=(150, 0))
-    # TODO connect terminals
 
-    # connect_nodes()
+    #connect_nodes
     chart.connectTerminals(dippid_node['accelX'], buffer_node_accel_x['dataIn'])
     chart.connectTerminals(dippid_node['accelY'], buffer_node_accel_y['dataIn'])
     chart.connectTerminals(dippid_node['accelZ'], buffer_node_accel_z['dataIn'])
