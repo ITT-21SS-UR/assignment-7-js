@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# coding: utf-8
+# -*- coding: utf-8 -*-
+
 import sys
 
 from datetime import datetime
@@ -14,8 +18,16 @@ The game is implemented for the M5Stack and uses UDP port for connection.
 
 HOW TO START THE PROGRAM:
 - Connect the M5Stack over UDP port
-- Type "python3 dippid_game_ui.py [PORT]" into console
+- Type "python3 dippid_game.py [PORT]" into console
 - As default PORT use 5700
+
+GAME:
+- In random order instructions like "Press the left button" or "Turn it to the right" are shown.
+- The user has to follow the instructions.
+- If the action was correct, the window gets green, if not it gets red.
+- Also the remaning turns are displayed.
+- After 10 turns (defined as TOTAL_TURNS; can be adjusted) the game ends.
+- The score and the total time are displayed at the end.
 
 Author: Sarah
 Reviewer: Jonas

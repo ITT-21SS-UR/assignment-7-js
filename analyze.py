@@ -1,7 +1,11 @@
+#!/usr/bin/env python3
+# coding: utf-8
+# -*- coding: utf-8 -*-
+
 import sys
-from numpy.core.function_base import logspace
 import pyqtgraph as pg
 import numpy as np
+from numpy.core.function_base import logspace
 
 import pyqtgraph.flowchart.library as fclib
 from pyqtgraph.flowchart import Flowchart, Node
@@ -12,6 +16,12 @@ from pyqtgraph.Qt import QtGui, QtCore
 from DIPPID_pyqtnode import BufferNode, DIPPIDNode
 from DIPPID import SensorUDP, SensorSerial, SensorWiimote
 
+'''
+The script is implemented for the M5Stack and uses UDP port for connection.
+
+Author: Jonas
+Reviewer: Sarah
+'''
 
 # create NormalVectorNode
 class NormalVectorNode(Node):
