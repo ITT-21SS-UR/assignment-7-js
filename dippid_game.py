@@ -10,7 +10,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QVBoxLayout
 
-from DIPPID_MAIN.DIPPID import SensorUDP
+from DIPPID import SensorUDP
 from dippid_model import GameModel
 
 '''
